@@ -1,0 +1,21 @@
+{
+  "name": "filofax",
+  "version": "0.0.1",
+  "description": "log for trace",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.alibaba-inc.com/mars/filofax.git"
+  },
+  "devDependencies": {
+    "gulp": "*"
+  },
+  "dependencies": {
+    "justlog": "*"
+  },
+  "engines": {
+    "node": ">= 4.2"
+  }
+}
