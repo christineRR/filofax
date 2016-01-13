@@ -7,7 +7,9 @@ var libraryName = 'filofax';
 var plugins = [];
 
 if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({minimize: true}));
+  plugins.push(new UglifyJsPlugin({
+    compress: {warnings: false}
+  }));
   outputFile = libraryName + '.min.js';
 } else {
   outputFile = libraryName + '.js';
@@ -22,7 +24,7 @@ var config = {
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
-  plugins: [],
+  plugins: plugins,
   module: {
     loaders: [
       {
