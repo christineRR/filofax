@@ -3,17 +3,25 @@
   "version": "0.0.1",
   "description": "log for trace",
   "scripts": {
-    "test": "gulp test"
+    "build":  "WEBPACK_ENV=build webpack",
+    "dev": "WEBPACK_ENV=dev webpack --progress --colors",
+    "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.test.js"
   },
   "repository": {
     "type": "git",
     "url": "http://gitlab.alibaba-inc.com/mars/filofax.git"
   },
   "devDependencies": {
-    "gulp": "*"
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-preset-es2015": "*",
+    "babel-preset-react": "*",
+    "babel-plugin-add-module-exports": "*",
+    "webpack": "*",
+    "mocha": "*",
+    "chai": "*"
   },
   "dependencies": {
-    "justlog": "*"
   },
   "engines": {
     "node": ">= 4.2"
