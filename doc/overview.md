@@ -2,7 +2,7 @@
 
 描述当前调用函数信息的对象
 
-```js
+```javascript
 //v8 stack trace api https://github.com/v8/v8/wiki/Stack%20Trace%20API
 // stackframe https://github.com/stacktracejs/stackframe
 class StackFrame {
@@ -44,7 +44,7 @@ class StackFrame {
 
 描述当前调用函数的函数调用栈
 
-```js
+```javascript
 // function backtrace
 // arguments.callee.caller 向上溯源
 class StackGenerator {
@@ -61,7 +61,7 @@ class StackGenerator {
 
 全局记录埋点调用函数，支持dump数据到服务端，生成文件记录。
 
-```js
+```javascript
 class ShotTrace {
 
   constructor(opts) {
@@ -109,7 +109,7 @@ class ShotTrace {
 
 ### 初始化
 
-```js
+```javascript
 // init shot trace
 var shottrace = new ShotTrace({...});
 // trigger when error
@@ -120,7 +120,7 @@ window.onError = function () {
 
 ### 埋点初始化
 
-```js
+```javascript
 class Request{
 
   constructor() {}
