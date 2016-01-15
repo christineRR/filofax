@@ -1,14 +1,34 @@
 ### StackFrame 对象
 
-描述当前调用函数信息的对象
+> 自定义的 stack frame 对象，类似于 [V8](https://github.com/v8/v8/wiki/Stack%20Trace%20API) 和 [Gecko](http://mxr.mozilla.org/mozilla-central/source/xpcom/base/nsIException.idl#14) 的实现。
 
+#### arguments.callee
+
+```js
+// parse arguments.callee
+var opts = {
+  functionName: arguments.callee.toString(),
+  args: arguments.callee.arguments,
+  ...
+};
+var stackframe = new StackFrame(opts);
+```
+#### Error Object
+
+```js
+// parse Error Object
+var err = new Error('boom');
+var opts = ErrorStackParser.parse(err);
+var stackframe = new StackFrame(opts);
+```
+
+#### 抽象类
 ```javascript
-//v8 stack trace api https://github.com/v8/v8/wiki/Stack%20Trace%20API
+// v8 stack trace api https://github.com/v8/v8/wiki/Stack%20Trace%20API
 // stackframe https://github.com/stacktracejs/stackframe
 class StackFrame {
 
-  constructor: () {
-    // get from arguments.callee
+  constructor: (opts) {
     this.functionName = 'funName';
     this.args = ['args'];
     this.fileName = 'http://localhost:3000/file.min.js';
@@ -16,6 +36,7 @@ class StackFrame {
     this.columnNumber = 324;
     this.source = 'ORIGINAL_STACK_LINE';
     this.token = 'root-parent-child-random-date';
+    this.rootToken = '';
   }
 
   toString() {
@@ -37,21 +58,22 @@ class StackFrame {
   getSource() {}
   
   getToken() {}
+  
+  getRootToken() {}
 }
 ```
 
 ### StackGenerator
 
-描述当前调用函数的函数调用栈
+> 生成当前函数调用链
 
 ```javascript
-// function backtrace
-// arguments.callee.caller 向上溯源
 class StackGenerator {
 
   constructor() {}
 
   backtrace() {
+    // arguments.callee.caller 向上溯源
     return [StackFrame({functionName: 'foo', args: []}), StackFrame(..), StackFrame(..)];
   }
 }
@@ -59,33 +81,51 @@ class StackGenerator {
 
 ### ShotTrace
 
-全局记录埋点调用函数，支持dump数据到服务端，生成文件记录。
+> 全局记录对象，轮转记录一段时间内埋点调用产生 stack 对象，特定条件下触发 dump，上传全局 stack 信息。
 
 ```javascript
 class ShotTrace {
 
   constructor(opts) {
-    // 周期十分钟
-    this.cycle = 10*60*1000;
-
-    this.stack = [];
-    this.maxStackSize = 10;
+    // 1 分钟
+    this.lifettime = 1*60*1000;
+    // 10s
+    this.period = 10*1000;
+    
+    this.maxSize = this.lifetime / this.period;
+    this.stack = [
+      {
+        rootToken1: [stack1, stack2 ...],
+        rootToken2: [stack1, stack2 ...],
+        ...
+      },
+      {...},
+      ...
+    ];
+    
     this.startTime = new Date();
   }
 
   shot() {
     var now = new Date();
-    if (now - this.startTime > this.cycle) {
-      this.reset();
+    var sub = now - this.startTime;
+    // 整数位数
+    var trunc = Math.trunc(this.period).toString().length;
+    // sub 后 trunc 数值
+    var leftSub = Math.sub(sub, trunc);
+    
+    // [0-9]
+    var cursor = leftSub / this.period;
+    
+    if (cursor >= this.maxSize) {
+      var index = cursor % this.maxSize;
+    } else {
+      var index = cursor;
     }
+
     this.stack.push(new StackFrame(...));
   }
   
-  reset() {
-    this.startTime = new Date();
-    this.stack = [];
-  }
-
   dump(){
     // stack to string
     for(var item of this.stack) {
@@ -113,12 +153,12 @@ class ShotTrace {
 // init shot trace
 var shottrace = new ShotTrace({...});
 // trigger when error
-window.onError = function () {
-  shottrace.dump();
+window.onError = function (err) {
+  shottrace.dump(err);
 }
 ```
 
-### 埋点初始化
+#### 埋点示例
 
 ```javascript
 class Request{
@@ -131,3 +171,9 @@ class Request{
   }
 }
 ```
+
+### TODO
+
++ 浏览器共享全局 stack 对象，使用 shell worker
++ 合并 dump 上传
++ 上传数据压缩、websocket gizp
