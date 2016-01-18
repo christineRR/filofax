@@ -1,35 +1,89 @@
+/**
+ * 自定义的 stack frame 对象 
+ * 类似于 V8 https://github.com/v8/v8/wiki/Stack%20Trace%20API
+ */
+
 class StackFrame {
 
-  constructor() {
-    // get from arguments.callee
-    this.functionName = 'funName';
-    this.args = ['args'];
-    this.fileName = 'http://localhost:3000/file.min.js';
-    this.lineNumber = 1;
-    this.columnNumber = 324;
-    this.source = 'ORIGINAL_STACK_LINE';
-    this.token = 'root-parent-child-random-date';
+  constructor(obj) {
+    if (obj instanceof Object) {
+      // string
+      this.functionName = obj.functionName || '';
+      this.fileName     = obj.fileName || '';
+      this.source       = obj.source || '';
+
+      // array
+      this.args = obj.args || [];
+
+      // number
+      this.lineNumber   = isNumber(obj.lineNumber)|| 0;
+      this.columnNumber = isNumber(obj.columnNumber) || 0;
+
+      // boolean
+      this.isConstructor = obj.isConstructor;
+      this.isToplevel    = obj.isToplevel;
+
+      // token
+      this.rootToken = '';
+      this.token = '';
+    }
+  }
+
+  static isNumber() {
+    return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
   toString() {
-    return 'funName(args)@http://localhost:3000/file.js:325:20@token123';
+    var functionName = this.getFunctionName() || '{anonymous}';
+    var args = (this.getArgs()).join(',');
+    var fileName = this.getFileName();
+    var lineNumber = this.getLineNumber();
+    var columnNumber = this.getColumnNumber();
+    var rootToken = this.getRootToken();
+    var token = this.getToken();
+
+    return `${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
   }
 
-  getFunctionName() {}
+  getFunctionName() {
+    return this.functionName;
+  }
 
-  getFileName() {}
+  getFileName() {
+    return this.fileName;
+  }
 
-  getLineNumber() {}
+  getSource() {
+    return this.source;
+  }
 
-  getColumnNumber() {}
+  getArgs() {
+    return this.args;
+  }
 
-  isToplevel() {}
+  getLineNumber() {
+    return this.lineNumber;
+  }
 
-  isConstructor() {}
+  getColumnNumber() {
+    return this.columnNumber;
+  }
+
+  isToplevel() {
+    return this.isToplevel;
+  }
+
+  isConstructor() {
+    return this.isConstructor;
+  }
   
-  getSource() {}
-  
-  getToken() {}
+  getToken() {
+    return this.token;
+  }
+
+  getRootToken() {
+    return this.rootToken;
+  }
 }
 
 module.exports = StackFrame;
