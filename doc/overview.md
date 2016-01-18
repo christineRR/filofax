@@ -114,7 +114,7 @@ class ShotTrace {
     // sub 后 trunc 数值
     var leftSub = Math.sub(sub, trunc);
     
-    // [0-9]
+    // 根据时间轮转获取当前 stack 元素
     var cursor = leftSub / this.period;
     
     if (cursor >= this.maxSize) {
@@ -122,19 +122,28 @@ class ShotTrace {
     } else {
       var index = cursor;
     }
-
-    this.stack.push(new StackFrame(...));
+    
+    var group = this.stack[index];
+    
+    var stackfram = new StackFrame(arguments.callee);
+    var rootToken = stackframe.rootToken;
+    if (!group.hasOwnProperty(rootToken)) {
+        group[rootToken] = []
+    }
+    group[rootToken].push(stackframe.toString());
   }
   
   dump(){
-    // stack to string
-    for(var item of this.stack) {
-      stackInfo += item.toString()
-    }
-    this.upload(stackInfo);
+    this.combine();
+    this.upload();
   }
 
-  upload(stackInfo){
+  combine(){
+    // 合并 this.stack
+  }
+  
+  upload(){
+    var stackInfo = 'combineStackInfo';
     $.ajax({
       url: '',
       data: {stackInfo}
