@@ -10,26 +10,31 @@ class StackFrame {
       // string
       this.functionName = obj.functionName || '';
       this.fileName     = obj.fileName || '';
+      // 后台解析 source-map
       this.source       = obj.source || '';
 
       // array
       this.args = obj.args || [];
 
       // number
-      this.lineNumber   = isNumber(obj.lineNumber)|| 0;
-      this.columnNumber = isNumber(obj.columnNumber) || 0;
+      this.lineNumber   = StackFrame.isNumber(obj.lineNumber) ? obj.lineNumber : 0;
+      this.columnNumber = StackFrame.isNumber(obj.columnNumber) ? obj.columnNumber : 0;
 
       // boolean
       this.isConstructor = obj.isConstructor;
       this.isToplevel    = obj.isToplevel;
 
       // token
-      this.rootToken = '';
-      this.token = '';
+      if (obj.rootToken) {
+        this.rootToken = obj.rootToken;
+      } else {
+        this.setRootToken();
+      }
+      this.setToken();
     }
   }
 
-  static isNumber() {
+  static isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
@@ -77,12 +82,25 @@ class StackFrame {
     return this.isConstructor;
   }
   
-  getToken() {
-    return this.token;
+  setRootToken() {
+    var functionName = this.getFunctionName();
+    var date = Date.parse(new Date());
+    this.rootToken = `${functionName}:${date}`;
   }
 
   getRootToken() {
     return this.rootToken;
+  }
+
+  getToken() {
+    return this.token;
+  }
+
+  setToken() {
+    var rootToken = this.getRootToken();
+    var functionName = this.getFunctionName();
+    var date = Date.parse(new Date());
+    this.token = `${rootToken}:${functionName}:${date}`;
   }
 }
 

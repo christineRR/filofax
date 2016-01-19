@@ -1,13 +1,15 @@
-var StackFrame = require('../src/stackframe');
+var StackParser = require('../src/stackparser');
 
 class A {
 
   constructor(name) {
+    StackParser.get();
     this.name = name;
     console.log(`${this.name} love apple!`);
   }
 
   eat(type) {
+    StackParser.get();
     console.log('-------start eating apple-----------')
     for(var item of type) {
       console.log(`${this.name} eat ${item} apple!`);
@@ -20,11 +22,13 @@ class A {
 class B {
 
   constructor(name) {
+    StackParser.get();
     this.name = name;
     console.log(`${this.name} love pear!`);
   }
 
   eat(type) {
+    StackParser.get();
     console.log('-------start eating pear------------')
     for(var item of type) {
       console.log(`${this.name} eat ${item} pear!`);
@@ -57,6 +61,7 @@ class C {
   }
 
   share() {
+    StackParser.get();
     for(var item of this.children) {
       switch (item.love) {
         case 'apple':
@@ -75,11 +80,14 @@ class C {
   }
 
   eat() {
+    StackParser.get();
     for(var fruit of this.fruits) {
       var name = fruit.name;
       for(var item of this.children) {
         if (item.name === name) {
-          fruit.eat(item.type);
+          setTimeout(function(){
+            fruit.eat(item.type);
+          }, 5000);
           continue;
         }
       }
