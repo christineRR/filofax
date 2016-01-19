@@ -1,35 +1,107 @@
+/**
+ * 自定义的 stack frame 对象 
+ * 类似于 V8 https://github.com/v8/v8/wiki/Stack%20Trace%20API
+ */
+
 class StackFrame {
 
-  constructor() {
-    // get from arguments.callee
-    this.functionName = 'funName';
-    this.args = ['args'];
-    this.fileName = 'http://localhost:3000/file.min.js';
-    this.lineNumber = 1;
-    this.columnNumber = 324;
-    this.source = 'ORIGINAL_STACK_LINE';
-    this.token = 'root-parent-child-random-date';
+  constructor(obj) {
+    if (obj instanceof Object) {
+      // string
+      this.functionName = obj.functionName || '';
+      this.fileName     = obj.fileName || '';
+      // 后台解析 source-map
+      this.source       = obj.source || '';
+
+      // array
+      this.args = obj.args || [];
+
+      // number
+      this.lineNumber   = StackFrame.isNumber(obj.lineNumber) ? obj.lineNumber : 0;
+      this.columnNumber = StackFrame.isNumber(obj.columnNumber) ? obj.columnNumber : 0;
+
+      // boolean
+      this.isConstructor = obj.isConstructor;
+      this.isToplevel    = obj.isToplevel;
+
+      // token
+      if (obj.rootToken) {
+        this.rootToken = obj.rootToken;
+      } else {
+        this.setRootToken();
+      }
+      this.setToken();
+    }
+  }
+
+  static isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
   toString() {
-    return 'funName(args)@http://localhost:3000/file.js:325:20@token123';
+    var functionName = this.getFunctionName() || '{anonymous}';
+    var args = (this.getArgs()).join(',');
+    var fileName = this.getFileName();
+    var lineNumber = this.getLineNumber();
+    var columnNumber = this.getColumnNumber();
+    var rootToken = this.getRootToken();
+    var token = this.getToken();
+
+    return `${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
   }
 
-  getFunctionName() {}
+  getFunctionName() {
+    return this.functionName;
+  }
 
-  getFileName() {}
+  getFileName() {
+    return this.fileName;
+  }
 
-  getLineNumber() {}
+  getSource() {
+    return this.source;
+  }
 
-  getColumnNumber() {}
+  getArgs() {
+    return this.args;
+  }
 
-  isToplevel() {}
+  getLineNumber() {
+    return this.lineNumber;
+  }
 
-  isConstructor() {}
+  getColumnNumber() {
+    return this.columnNumber;
+  }
+
+  isToplevel() {
+    return this.isToplevel;
+  }
+
+  isConstructor() {
+    return this.isConstructor;
+  }
   
-  getSource() {}
-  
-  getToken() {}
+  setRootToken() {
+    var functionName = this.getFunctionName();
+    var date = Date.parse(new Date());
+    this.rootToken = `${functionName}:${date}`;
+  }
+
+  getRootToken() {
+    return this.rootToken;
+  }
+
+  getToken() {
+    return this.token;
+  }
+
+  setToken() {
+    var rootToken = this.getRootToken();
+    var functionName = this.getFunctionName();
+    var date = Date.parse(new Date());
+    this.token = `${rootToken}:${functionName}:${date}`;
+  }
 }
 
 module.exports = StackFrame;

@@ -14,10 +14,11 @@
   "devDependencies": {
     "babel-core": "*",
     "babel-loader": "*",
-    "babel-preset-es2015": "*",
+    "babel-preset-es2015-without-strict": "*",
     "babel-preset-react": "*",
     "babel-plugin-add-module-exports": "*",
     "webpack": "*",
+    "webpack-dev-server": "*",
     "mocha": "*",
     "chai": "*"
   },
