@@ -27,11 +27,7 @@ class StackFrame {
       this.isToplevel    = obj.isToplevel;
 
       // token
-      if (obj.rootToken) {
-        this.rootToken = obj.rootToken;
-      } else {
-        this.setRootToken();
-      }
+      this.rootToken = obj.rootToken || null;
       this.setToken();
     }
   }
@@ -88,12 +84,6 @@ class StackFrame {
   isConstructor() {
     return this.isConstructor;
   }
-  
-  setRootToken() {
-    var functionName = this.getFunctionName();
-    var date = Date.parse(new Date());
-    this.rootToken = `${functionName}:${date}`;
-  }
 
   getRootToken() {
     return this.rootToken;
@@ -106,8 +96,7 @@ class StackFrame {
   setToken() {
     var rootToken = this.getRootToken();
     var functionName = this.getFunctionName();
-    var date = Date.parse(new Date());
-    this.token = `${rootToken}:${functionName}:${date}`;
+    this.token = `${rootToken}:${functionName}:${performance.now()}`;
   }
 }
 

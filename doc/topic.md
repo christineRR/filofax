@@ -40,3 +40,14 @@ function trace(){
 
 ### source-map 问题
 
+### v8 高精度时间
+
+```js
+// nodejs
+process.hrttime();
+```
+
+```js
+// browser
+performance.now();
+```

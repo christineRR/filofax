@@ -4,10 +4,11 @@
  */
 
 var StackFrame = require('./stackframe');
+var currentRootToken = '';
 
 class StackTrace {
 
-  static get(belowFn) {
+  static get(opts, belowFn) {
     // get stack callsite array
     var orig = Error.prepareStackTrace;
     Error.prepareStackTrace = function(_, stack){ return stack; };
@@ -23,22 +24,19 @@ class StackTrace {
     var stack = err.stack;
     Error.prepareStackTrace = orig;
 
-    // get rootToken from parent callsite object
-    var rootToken = null;
-    for(var item of stack) {
-      var instance = item.getFunction();
-      if(instance && instance.rootToken) {
-        rootToken = instance.rootToken;
-        break;
-      }
+    var firstCaller = stack[0];
+
+    if (opts && opts.type === 'root') {
+      currentRootToken =  `${firstCaller.getFunctionName()}:${performance.now()}`;
+      // 每隔 50ms 销毁
+      setTimeout(function () {
+        currentRootToken = null;
+      }, 50);
     }
 
-    console.log('get rootToken from parent:', rootToken);
-
-    var firstCaller = stack[0];
     var func = firstCaller.getFunction();
     var args = Array.prototype.slice.call(func.arguments, 0);
-    var opt = {
+    var sf = new StackFrame({
       typeName: firstCaller.getTypeName(),
       functionName: firstCaller.getFunctionName(),
       fileName: firstCaller.getFileName(),
@@ -47,10 +45,8 @@ class StackTrace {
       columnNumber: firstCaller.getColumnNumber(),
       isConstructor: firstCaller.isConstructor(),
       isToplevel: firstCaller.isToplevel(),
-      rootToken: rootToken
-    };
-
-    var sf = new StackFrame(opt);
+      rootToken: currentRootToken
+    });
 
     // hook rootToken to this;
     var that = firstCaller.getFunction();
@@ -95,7 +91,7 @@ class StackTrace {
       args: [],
       lineNumber: lineNumber,
       columnNumber: columnNumber,
-      rootToken: ''
+      rootToken: currentRootToken
     });
 
     console.log(sf.toString());
