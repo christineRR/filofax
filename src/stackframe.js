@@ -28,7 +28,8 @@ class StackFrame {
 
       // token
       this.rootToken = obj.rootToken || null;
-      this.setToken();
+      this.parentToken = obj.parentToken || null;
+      this.token = obj.token || null;
     }
   }
 
@@ -44,9 +45,10 @@ class StackFrame {
     var lineNumber = this.getLineNumber();
     var columnNumber = this.getColumnNumber();
     var rootToken = this.getRootToken();
+    var parentToken = this.getParentToken();
     var token = this.getToken();
 
-    return `${this.prefix}${typeName}.${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
+    return `${this.prefix}${typeName}.${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${parentToken}-${token}`;
   }
 
   getTypeName() {
@@ -89,14 +91,12 @@ class StackFrame {
     return this.rootToken;
   }
 
-  getToken() {
-    return this.token;
+  getParentToken() {
+    return this.parentToken;
   }
 
-  setToken() {
-    var rootToken = this.getRootToken();
-    var functionName = this.getFunctionName();
-    this.token = `${rootToken}:${functionName}:${performance.now()}`;
+  getToken() {
+    return this.token;
   }
 }
 
