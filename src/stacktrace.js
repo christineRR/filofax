@@ -5,7 +5,7 @@
 
 var StackFrame = require('./stackframe');
 
-class StackParser {
+class StackTrace {
 
   static get(belowFn) {
     // get stack callsite array
@@ -17,7 +17,7 @@ class StackParser {
      * getFunction() return undefined
      * getThis return undefined
      */
-    // Error.captureStackTrace(err, belowFn || StackParser.get);
+    // Error.captureStackTrace(err, belowFn || StackTrace.get);
     Error.captureStackTrace(err, belowFn || arguments.callee);
 
     var stack = err.stack;
@@ -96,4 +96,4 @@ class StackParser {
   }
 }
 
-module.exports = StackParser;
+module.exports = StackTrace;
