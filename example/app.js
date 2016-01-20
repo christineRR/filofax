@@ -85,16 +85,26 @@ class C {
       var name = fruit.name;
       for(var item of this.children) {
         if (item.name === name) {
-          setTimeout(function(){
-            fruit.eat(item.type);
-          }, 5000);
+          fruit.eat(item.type);
           continue;
         }
       }
     }
   }
+
+  fake() {
+    throw new Error('school fake error');
+  }
+
+}
+
+window.onerror = function (msg, url, line, column, err) {
+  StackParser.parse(err);
 }
 
 var school = new C();
 school.share();
 school.eat();
+
+// trigger error
+school.fake();

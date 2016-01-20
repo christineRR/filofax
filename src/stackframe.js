@@ -8,6 +8,7 @@ class StackFrame {
   constructor(obj) {
     if (obj instanceof Object) {
       // string
+      this.prefix = obj.prefix ? `${obj.prefix}@` : '';
       this.functionName = obj.functionName || '';
       this.fileName     = obj.fileName || '';
       // 后台解析 source-map
@@ -47,7 +48,7 @@ class StackFrame {
     var rootToken = this.getRootToken();
     var token = this.getToken();
 
-    return `${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
+    return `${this.prefix}${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
   }
 
   getFunctionName() {

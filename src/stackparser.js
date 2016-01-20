@@ -7,7 +7,7 @@ var StackFrame = require('./stackframe');
 
 class StackParser {
 
-  static get(belowFn, opts) {
+  static get(belowFn) {
     // get stack callsite array
     var orig = Error.prepareStackTrace;
     Error.prepareStackTrace = function(_, stack){ return stack; };
@@ -59,8 +59,40 @@ class StackParser {
     return sf;
   }
   
-  static parse() {
+  static parse(err) {
+    // var V8_STACK_REGEXP = /^\s*at .*(\S+\:\d+|\(native\))/m;
+    var V8_STACK_REGEXP = /at (?:(.+)\s+\()?(?:(.+?):(\d+):(\d+)|([^)]+))\)?/;
+    var errStack = err.stack.split('\n');
 
+    var errInfo = errStack[0];
+    var firstCaller = errStack[1];
+
+    var match = firstCaller.match(V8_STACK_REGEXP);
+
+    if (match) {
+      var functionName = match[1];
+      var fileName = match[2];
+      var lineNumber = parseInt(match[3], 10);
+      var columnNumber = parseInt(match[4], 10);
+    } else {
+      var functionName = '';
+      var fileName = '';
+      var lineNumber = 0;
+      var columnNumber = 0;
+    }
+
+    var sf = new StackFrame({
+      prefix: errInfo,
+      functionName: functionName,
+      fileName: fileName,
+      args: [],
+      lineNumber: lineNumber,
+      columnNumber: columnNumber,
+      rootToken: ''
+    });
+
+    console.log(sf.toString());
+    return sf;
   }
 }
 
