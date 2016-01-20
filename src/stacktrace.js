@@ -39,6 +39,7 @@ class StackTrace {
     var func = firstCaller.getFunction();
     var args = Array.prototype.slice.call(func.arguments, 0);
     var opt = {
+      typeName: firstCaller.getTypeName(),
       functionName: firstCaller.getFunctionName(),
       fileName: firstCaller.getFileName(),
       args: args,
@@ -62,6 +63,7 @@ class StackTrace {
   static parse(err) {
     // var V8_STACK_REGEXP = /^\s*at .*(\S+\:\d+|\(native\))/m;
     var V8_STACK_REGEXP = /at (?:(.+)\s+\()?(?:(.+?):(\d+):(\d+)|([^)]+))\)?/;
+    var TYPE_FUNCTION_REGEXP = /([^\.]+)(?:\.(.+))?/;
     var errStack = err.stack.split('\n');
 
     var errInfo = errStack[0];
@@ -70,11 +72,15 @@ class StackTrace {
     var match = firstCaller.match(V8_STACK_REGEXP);
 
     if (match) {
-      var functionName = match[1];
+      var typeMatch = match[1].match(TYPE_FUNCTION_REGEXP);
+      var typeName = typeMatch[1];
+      var functionName = typeMatch[2];
+
       var fileName = match[2];
       var lineNumber = parseInt(match[3], 10);
       var columnNumber = parseInt(match[4], 10);
     } else {
+      var typeName = '';
       var functionName = '';
       var fileName = '';
       var lineNumber = 0;
@@ -83,6 +89,7 @@ class StackTrace {
 
     var sf = new StackFrame({
       prefix: errInfo,
+      typeName: typeName,
       functionName: functionName,
       fileName: fileName,
       args: [],
