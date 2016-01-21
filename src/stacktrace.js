@@ -28,7 +28,7 @@ class StackTrace {
     var stack = err.stack;
     Error.prepareStackTrace = orig;
 
-    var firstCaller = stack[0];
+    var firstCaller = stack[1];
     var functionName = firstCaller.getFunctionName();
 
     if (opts && opts.type === 'root') {
