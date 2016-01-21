@@ -1,15 +1,16 @@
-var StackTrace = require('../src/stacktrace');
+var Filofax = require('../src/filofax');
+var trace = new Filofax();
 
 class A {
 
   constructor(name) {
-    StackTrace.get();
+    trace.shot();
     this.name = name;
     console.log(`${this.name} love apple!`);
   }
 
   eat(type) {
-    StackTrace.get();
+    trace.shot();
     console.log('-------start eating apple-----------')
     for(var item of type) {
       console.log(`${this.name} eat ${item} apple!`);
@@ -22,13 +23,13 @@ class A {
 class B {
 
   constructor(name) {
-    StackTrace.get();
+    trace.shot();
     this.name = name;
     console.log(`${this.name} love pear!`);
   }
 
   eat(type) {
-    StackTrace.get();
+    trace.shot();
     console.log('-------start eating pear------------')
     for(var item of type) {
       console.log(`${this.name} eat ${item} pear!`);
@@ -61,7 +62,7 @@ class C {
   }
 
   share() {
-    StackTrace.get({type: 'root'});
+    trace.shot({type: 'root'});
     for(var item of this.children) {
       switch (item.love) {
         case 'apple':
@@ -80,7 +81,7 @@ class C {
   }
 
   eat() {
-    StackTrace.get({type: 'root'});
+    trace.shot({type: 'root'});
     for(var fruit of this.fruits) {
       var name = fruit.name;
       for(var item of this.children) {
@@ -99,8 +100,10 @@ class C {
 }
 
 window.onerror = function (msg, url, line, column, err) {
-  StackTrace.parse(err);
+  trace.shot(err);
+  trace.dump();
 }
+
 
 var school = new C();
 school.share();
