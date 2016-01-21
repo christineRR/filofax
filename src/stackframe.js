@@ -30,6 +30,9 @@ class StackFrame {
       this.rootToken = obj.rootToken || null;
       this.parentToken = obj.parentToken || null;
       this.token = obj.token || null;
+
+      // init time
+      this.time = performance.now();
     }
   }
 

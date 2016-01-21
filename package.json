@@ -23,7 +23,6 @@
     "chai": "*"
   },
   "dependencies": {
-    "blueimp-md5": "*"
   },
   "engines": {
     "node": ">= 4.2"

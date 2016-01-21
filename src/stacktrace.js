@@ -4,13 +4,13 @@
  */
 
 var StackFrame = require('./stackframe');
-var md5 = require('blueimp-md5');
+// var md5 = require('blueimp-md5');
 var lastStackFrame = null;
 
 class StackTrace {
 
   static makeToken(str) {
-    return md5(`${str}:${performance.now()}`);
+    return `${str}:${performance.now()}`;
   }
   static get(opts, belowFn) {
     // get stack callsite array
@@ -36,8 +36,9 @@ class StackTrace {
       var parentToken = null;
       var token = rootToken;
     } else {
-      if (false) {
-
+      var interval = performance.now() - lastStackFrame.time;
+      if (interval >= 50) {
+        // TODO: 大于 50ms 的异步、定时任务情况处理
       } else {
         var rootToken = lastStackFrame.rootToken;
         var parentToken = lastStackFrame.token;
