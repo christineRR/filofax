@@ -4,10 +4,15 @@
  */
 
 var StackFrame = require('./stackframe');
+// var md5 = require('blueimp-md5');
+var lastStackFrame = null;
 
 class StackTrace {
 
-  static get(belowFn) {
+  static makeToken(str) {
+    return `${str}:${performance.now()}`;
+  }
+  static get(opts, belowFn) {
     // get stack callsite array
     var orig = Error.prepareStackTrace;
     Error.prepareStackTrace = function(_, stack){ return stack; };
@@ -23,22 +28,27 @@ class StackTrace {
     var stack = err.stack;
     Error.prepareStackTrace = orig;
 
-    // get rootToken from parent callsite object
-    var rootToken = null;
-    for(var item of stack) {
-      var instance = item.getFunction();
-      if(instance && instance.rootToken) {
-        rootToken = instance.rootToken;
-        break;
+    var firstCaller = stack[0];
+    var functionName = firstCaller.getFunctionName();
+
+    if (opts && opts.type === 'root') {
+      var rootToken =  StackTrace.makeToken(functionName);
+      var parentToken = null;
+      var token = rootToken;
+    } else {
+      var interval = performance.now() - lastStackFrame.time;
+      if (interval >= 50) {
+        // TODO: 大于 50ms 的异步、定时任务情况处理
+      } else {
+        var rootToken = lastStackFrame.rootToken;
+        var parentToken = lastStackFrame.token;
+        var token = StackTrace.makeToken(functionName);
       }
     }
 
-    console.log('get rootToken from parent:', rootToken);
-
-    var firstCaller = stack[0];
     var func = firstCaller.getFunction();
     var args = Array.prototype.slice.call(func.arguments, 0);
-    var opt = {
+    var sf = new StackFrame({
       typeName: firstCaller.getTypeName(),
       functionName: firstCaller.getFunctionName(),
       fileName: firstCaller.getFileName(),
@@ -47,15 +57,12 @@ class StackTrace {
       columnNumber: firstCaller.getColumnNumber(),
       isConstructor: firstCaller.isConstructor(),
       isToplevel: firstCaller.isToplevel(),
-      rootToken: rootToken
-    };
+      rootToken: rootToken,
+      parentToken: parentToken,
+      token: token
+    });
 
-    var sf = new StackFrame(opt);
-
-    // hook rootToken to this;
-    var that = firstCaller.getFunction();
-    that.rootToken = sf.getRootToken();
-
+    lastStackFrame = sf;
     console.log(sf.toString());
     return sf;
   }
@@ -95,7 +102,9 @@ class StackTrace {
       args: [],
       lineNumber: lineNumber,
       columnNumber: columnNumber,
-      rootToken: ''
+      rootToken: lastStackFrame.rootToken,
+      parentToken: lastStackFrame.token,
+      token: StackTrace.makeToken(functionName)
     });
 
     console.log(sf.toString());

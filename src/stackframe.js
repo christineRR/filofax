@@ -27,12 +27,12 @@ class StackFrame {
       this.isToplevel    = obj.isToplevel;
 
       // token
-      if (obj.rootToken) {
-        this.rootToken = obj.rootToken;
-      } else {
-        this.setRootToken();
-      }
-      this.setToken();
+      this.rootToken = obj.rootToken || null;
+      this.parentToken = obj.parentToken || null;
+      this.token = obj.token || null;
+
+      // init time
+      this.time = performance.now();
     }
   }
 
@@ -48,9 +48,10 @@ class StackFrame {
     var lineNumber = this.getLineNumber();
     var columnNumber = this.getColumnNumber();
     var rootToken = this.getRootToken();
+    var parentToken = this.getParentToken();
     var token = this.getToken();
 
-    return `${this.prefix}${typeName}.${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${token}`;
+    return `${this.prefix}${typeName}.${functionName}(${args})@${fileName}:${lineNumber}:${columnNumber}@${rootToken}-${parentToken}-${token}`;
   }
 
   getTypeName() {
@@ -88,26 +89,17 @@ class StackFrame {
   isConstructor() {
     return this.isConstructor;
   }
-  
-  setRootToken() {
-    var functionName = this.getFunctionName();
-    var date = Date.parse(new Date());
-    this.rootToken = `${functionName}:${date}`;
-  }
 
   getRootToken() {
     return this.rootToken;
   }
 
-  getToken() {
-    return this.token;
+  getParentToken() {
+    return this.parentToken;
   }
 
-  setToken() {
-    var rootToken = this.getRootToken();
-    var functionName = this.getFunctionName();
-    var date = Date.parse(new Date());
-    this.token = `${rootToken}:${functionName}:${date}`;
+  getToken() {
+    return this.token;
   }
 }
 
