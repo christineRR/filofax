@@ -24,6 +24,7 @@ class Filofax {
   shot(opts) {
     var now = performance.now();
     var interval = now - this.startime;
+
     var cursor = Math.floor((interval / this.shottime) % this.maxSize);
 
     var trace = this.stack[cursor];

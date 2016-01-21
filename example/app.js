@@ -94,6 +94,7 @@ class C {
   }
 
   fake() {
+    trace.shot({type: 'root'});
     throw new Error('school fake error');
   }
 
@@ -104,10 +105,8 @@ window.onerror = function (msg, url, line, column, err) {
   trace.dump();
 }
 
-
 var school = new C();
 school.share();
 school.eat();
-
 // trigger error
 school.fake();
