@@ -5,9 +5,11 @@ class Fruit extends React.Component {
     super(props);
     var total = parseInt(props.count, 10);
     this.state = {eated:0, left: total, total: total};
+    this.click = this.handleClick.bind(this);
   }
 
-  handleClick() {
+  handleClick(evt) {
+    this.props.trace.shot({type: 'root'});
     if(this.state.eated === this.state.total) {
       return;
     }
@@ -18,9 +20,10 @@ class Fruit extends React.Component {
   }
 
   render() {
+    this.props.trace.shot();
     return (
       <div>
-        <button onClick={this.handleClick.bind(this)}>吃{this.props.type}</button>
+        <button onClick={this.click}>吃{this.props.type}</button>
         <h3>一共 {this.props.count} 个{this.props.type}，已经吃了 {this.state.eated} 个，还剩下 {this.state.left} 个。 </h3>
       </div>
     );

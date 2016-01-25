@@ -7,10 +7,11 @@ class App extends React.Component {
   }
 
   render() {
+    this.props.trace.shot({type: 'root'});
     return (
       <div>
-        <Fruit type="苹果" count='30' />
-        <Fruit type="梨" count='10' />
+        <Fruit trace = {this.props.trace} type="苹果" count='30' />
+        <Fruit trace = {this.props.trace} type="梨" count='10' />
       </div>
     );
   }

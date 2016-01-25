@@ -37,7 +37,7 @@ class StackTrace {
       var token = rootToken;
     } else {
       var interval = performance.now() - lastStackFrame.time;
-      if (interval >= 50) {
+      if (interval >= 50000) {
         // TODO: 大于 50ms 的异步、定时任务情况处理
       } else {
         var rootToken = lastStackFrame.rootToken;
