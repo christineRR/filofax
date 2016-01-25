@@ -1,7 +1,8 @@
 var path = require("path");
 module.exports = {
   entry: {
-    app: ["./app.js"]
+    // app: ["./app.js"]
+    app: ["./index.jsx"]
   },
   output: {
     path: path.resolve(__dirname, "build"),
@@ -9,10 +10,13 @@ module.exports = {
     filename: "bundle.js"
   },
   devtool: 'source-map',
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /(\.jsx|\.js)$/,
         loader: 'babel',
         exclude: /(node_modules|bower_components)/
       }

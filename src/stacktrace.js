@@ -12,6 +12,7 @@ class StackTrace {
   static makeToken(str) {
     return `${str}:${performance.now()}`;
   }
+  
   static get(opts, belowFn) {
     // get stack callsite array
     var orig = Error.prepareStackTrace;
@@ -37,7 +38,7 @@ class StackTrace {
       var token = rootToken;
     } else {
       var interval = performance.now() - lastStackFrame.time;
-      if (interval >= 50) {
+      if (interval >= 50000) {
         // TODO: 大于 50ms 的异步、定时任务情况处理
       } else {
         var rootToken = lastStackFrame.rootToken;
@@ -63,7 +64,7 @@ class StackTrace {
     });
 
     lastStackFrame = sf;
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
   
@@ -107,7 +108,7 @@ class StackTrace {
       token: StackTrace.makeToken(functionName)
     });
 
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
 }

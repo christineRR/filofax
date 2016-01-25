@@ -5,7 +5,7 @@
   "scripts": {
     "build":  "WEBPACK_ENV=build webpack",
     "dev": "WEBPACK_ENV=dev webpack --progress --colors",
-    "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.test.js"
+    "test": "mocha --compilers js:babel-core/register -R TAP --require ./test/env.js --colors ./test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,10 @@
     "webpack": "*",
     "webpack-dev-server": "*",
     "mocha": "*",
-    "chai": "*"
+    "chai": "*",
+    "jsdom": "*",
+    "react": "*",
+    "react-dom": "*"
   },
   "dependencies": {
   },

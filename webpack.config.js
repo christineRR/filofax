@@ -28,14 +28,14 @@ var config = {
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /(\.jsx|\.js)$/,
         loader: 'babel',
         exclude: /(node_modules|bower_components)/
       }
     ]
   },
   resolve: {
-    extensions: ['', '.js']
+    extensions: ['', '.js', '.jsx']
   }
 };
 

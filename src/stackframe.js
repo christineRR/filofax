@@ -31,8 +31,15 @@ class StackFrame {
       this.parentToken = obj.parentToken || null;
       this.token = obj.token || null;
 
-      // init time
-      this.time = performance.now();
+      // init hrt time
+      if (window.performance) {
+        this.time = window.performance.now();
+      } else {
+        this.time = null;
+      }
+      
+    } else {
+      console.warn('stackframe arguments must be object!');
     }
   }
 
