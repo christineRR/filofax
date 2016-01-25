@@ -12,6 +12,7 @@ class StackTrace {
   static makeToken(str) {
     return `${str}:${performance.now()}`;
   }
+  
   static get(opts, belowFn) {
     // get stack callsite array
     var orig = Error.prepareStackTrace;
@@ -63,7 +64,7 @@ class StackTrace {
     });
 
     lastStackFrame = sf;
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
   
@@ -107,7 +108,7 @@ class StackTrace {
       token: StackTrace.makeToken(functionName)
     });
 
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
 }

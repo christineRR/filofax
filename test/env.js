@@ -15,6 +15,13 @@ jsdom.env({
       return console.log('jsdom env error', err);
     }
 
+    // mock performance.now
+    window.performance = {
+      now: function() {
+        return Math.random();
+      }
+    }
+
     // A super simple DOM ready for React to render into
     // Store this DOM and the window in global scope ready for React to access
     global.window = window;
