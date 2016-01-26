@@ -15,7 +15,7 @@ if (env === 'build') {
   outputFile = libraryName + '.js';
 }
 var config = {
-  entry: __dirname + '/src/index.js',
+  entry: __dirname + '/src/filofax.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
