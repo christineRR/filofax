@@ -64,7 +64,7 @@ class StackTrace {
     });
 
     lastStackFrame = sf;
-    // console.log(sf.toString());
+    console.log(sf.toString());
     return sf;
   }
   
@@ -108,7 +108,7 @@ class StackTrace {
       token: StackTrace.makeToken(functionName)
     });
 
-    // console.log(sf.toString());
+    console.log(sf.toString());
     return sf;
   }
 }

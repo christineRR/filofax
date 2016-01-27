@@ -49,6 +49,10 @@ class Filofax {
     console.log(this.stack);
   }
 
+  upload() {
+    
+  }
+
 }
 
 module.exports = Filofax;

@@ -10,12 +10,14 @@ class A {
   }
 
   eat(type) {
-    trace.shot();
-    console.log('-------start eating apple-----------')
-    for(var item of type) {
-      console.log(`${this.name} eat ${item} apple!`);
-    }
-    console.log('-------end eating apple-------------')
+    setTimeout(function () {
+      trace.shot();
+      console.log('-------start eating apple-----------')
+      for(var item of type) {
+        console.log(`${this.name} eat ${item} apple!`);
+      }
+      console.log('-------end eating apple-------------')
+    }, 30);
   }
 
 }
