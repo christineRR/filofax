@@ -2,6 +2,33 @@
 
 > 通过应用主动埋点，记录应用程序运行过程中业务模块父子调用链及依赖关系，根据条件触发记录上传。
 
+## 安装
+
+```bash
+tnpm install filofax
+```
+
+## 使用
+
+```js
+var Filofax = require('filofax');
+
+// create global instance
+var ff = new Filofax();
+
+// 根节点埋点
+ff.shot({type: 'root'});
+
+// 子节点埋点
+ff.shot();
+
+// 错误埋点
+var err = new Error('something wrong');
+ff.shot(err);
+
+// dump 导出堆栈信息
+ff.dump();
+```
 
 ## 详细设计
 
