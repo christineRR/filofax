@@ -27,7 +27,6 @@
     "react-dom": "*"
   },
   "dependencies": {
-    "stack-chain": "*"
   },
   "engines": {
     "node": ">= 4.2"
