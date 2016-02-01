@@ -1,9 +1,12 @@
 const chain = require('./stack-chain');
 var AsyncHook = require('./hook');
 var asyncHook = new AsyncHook();
+var Last = require('./last');
 
 let callSitesForPreviuseTicks = null;
+let lastStackFrame = null;
 const stacks = new Map();
+const lastMap = new Map();
 
 asyncHook.add({
   init: asyncInit,
@@ -15,6 +18,9 @@ asyncHook.add({
 asyncHook.enable();
 
 chain.extend.attach(function (error, frames) {
+  if (lastStackFrame) {
+    error.lastStackFrame = lastStackFrame;
+  }
   frames.push.apply(frames, callSitesForPreviuseTicks);
   return frames;
 });
@@ -34,6 +40,7 @@ function getCallSites(skip) {
 }
 
 function asyncInit(uid, handle, parentUid) {
+  console.log('async init', uid);
   const trace = getCallSites(2);
 
   // Add all the callSites from previuse ticks
@@ -46,12 +53,14 @@ function asyncInit(uid, handle, parentUid) {
   // `trace` now contains callSites from this ticks and all the ticks leading
   // up to this event in time
   stacks.set(uid, trace);
+  lastMap.set(uid, Last.stackframe);
 }
 
 function asyncBefore(uid) {
   // restore previuseTicks for this specific async action, thereby allowing it
   // to become a part of a error `stack` string
   callSitesForPreviuseTicks = stacks.get(uid);
+  lastStackFrame = lastMap.get(uid);
 }
 
 function asyncAfter(uid) {
@@ -59,8 +68,10 @@ function asyncAfter(uid) {
   // handle context is lost. So to prevent callSites leaking into the wrong
   // stack trace, clear `callSitesForPreviuseTicks` here.
   callSitesForPreviuseTicks = null;
+  lastStackFrame = null;
 }
 
 function asyncDestroy(uid) {
   stacks.delete(uid);
+  lastMap.delete(uid);
 }

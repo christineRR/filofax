@@ -17,7 +17,7 @@ class A {
         console.log(`${this.name} eat ${item} apple!`);
       }
       console.log('-------end eating apple-------------')
-    }, 30);
+    }, 600);
   }
 
 }
@@ -111,4 +111,9 @@ var school = new C();
 school.share();
 school.eat();
 // trigger error
-school.fake();
+// school.fake();
+
+setTimeout(function () {
+  console.log('*************')
+  trace.dump();
+}, 1000);

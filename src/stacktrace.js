@@ -7,7 +7,7 @@
 require('./async');
 Error.stackTraceLimit = Infinity;
 var StackFrame = require('./stackframe');
-var lastStackFrame = null;
+var Last = require('./last');
 
 class StackTrace {
 
@@ -16,30 +16,37 @@ class StackTrace {
   }
   
   static get(opts) {
+    var lastStackFrame = Last.stackframe;
     var err = new Error();
+    // err.lastStackFrame = lastStackFrame;
     Error.captureStackTrace(err, arguments.callee);
     var stack = err.callSite.mutated;
     console.log(stack);
 
-    for(var item of stack) {
-      console.log(item.getTypeName(), item.getFunctionName(), item.getLineNumber());
-    }
+    // console.log(err.lastStackFrame)
+    // 重新赋值，异步会重新覆盖err.lastStackFrame对象
+    lastStackFrame = err.lastStackFrame ? err.lastStackFrame : lastStackFrame;
+
+    // for(var item of stack) {
+    //   console.log(item.getTypeName(), item.getFunctionName(), item.getLineNumber());
+    // }
     var firstCaller = stack[1];
     var functionName = firstCaller.getFunctionName();
+    var typeName = firstCaller.getTypeName();
 
     if (opts && opts.type === 'root') {
-      var rootToken =  StackTrace.makeToken(functionName);
+      var rootToken =  StackTrace.makeToken(`${typeName}:${functionName}`);
       var parentToken = null;
       var token = rootToken;
     } else {
-      var interval = performance.now() - lastStackFrame.time;
-      if (interval >= 50000) {
-        // TODO: 大于 50ms 的异步、定时任务情况处理
-      } else {
-        var rootToken = lastStackFrame.rootToken;
-        var parentToken = lastStackFrame.token;
-        var token = StackTrace.makeToken(functionName);
-      }
+      // var interval = performance.now() - lastStackFrame.time;
+      // if (interval >= 50000) {
+      //   // TODO: 大于 50ms 的异步、定时任务情况处理
+      // } else {
+      var rootToken = lastStackFrame.rootToken;
+      var parentToken = lastStackFrame.token;
+      var token = StackTrace.makeToken(`${typeName}:${functionName}`);
+      // }
     }
 
     var func = firstCaller.getFunction();
@@ -58,7 +65,7 @@ class StackTrace {
       token: token
     });
 
-    lastStackFrame = sf;
+    Last.stackframe = sf;
     console.log(sf.toString());
     return sf;
   }
@@ -90,6 +97,7 @@ class StackTrace {
       var columnNumber = 0;
     }
 
+    var lastStackFrame = Last.stackframe;
     var sf = new StackFrame({
       prefix: errInfo,
       typeName: typeName,
@@ -100,7 +108,7 @@ class StackTrace {
       columnNumber: columnNumber,
       rootToken: lastStackFrame.rootToken,
       parentToken: lastStackFrame.token,
-      token: StackTrace.makeToken(functionName)
+      token: StackTrace.makeToken(`${typeName}:${functionName}`)
     });
 
     console.log(sf.toString());
