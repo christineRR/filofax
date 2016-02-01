@@ -3,6 +3,9 @@
  * 2. format Error Object to StackFrame Object
  */
 
+// hook async
+require('./async');
+const chain = require('./stack-chain');
 var StackFrame = require('./stackframe');
 // var md5 = require('blueimp-md5');
 var lastStackFrame = null;
@@ -15,20 +18,24 @@ class StackTrace {
   
   static get(opts, belowFn) {
     // get stack callsite array
-    var orig = Error.prepareStackTrace;
-    Error.prepareStackTrace = function(_, stack){ return stack; };
-    var err = new Error;
+    // var orig = Error.prepareStackTrace;
+    // Error.prepareStackTrace = function(_, stack){ return stack; };
+    // var err = new Error;
     /**
      * when strict mode, arguments.callee not work
      * getFunction() return undefined
      * getThis return undefined
      */
     // Error.captureStackTrace(err, belowFn || StackTrace.get);
-    Error.captureStackTrace(err, belowFn || arguments.callee);
+    // Error.captureStackTrace(err, belowFn || arguments.callee);
 
-    var stack = err.stack;
-    Error.prepareStackTrace = orig;
-
+    // var stack = err.stack;
+    // Error.prepareStackTrace = orig;
+    
+    var stack = chain.callSite();
+    for(var item of stack) {
+      console.log(item.getTypeName(), item.getFunctionName(), item.getLineNumber());
+    }
     var firstCaller = stack[1];
     var functionName = firstCaller.getFunctionName();
 

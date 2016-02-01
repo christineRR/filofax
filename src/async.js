@@ -20,42 +20,6 @@ chain.extend.attach(function (error, frames) {
   return frames;
 });
 
-
-// function getCallSites() {
-//   // get stack callsite array
-//   var orig = Error.prepareStackTrace;
-//   Error.prepareStackTrace = function(_, stack){ return stack; };
-//   var err = new Error;
-//   /**
-//    * when strict mode, arguments.callee not work
-//    * getFunction() return undefined
-//    * getThis return undefined
-//    */
-//   // Error.captureStackTrace(err, belowFn || StackTrace.get);
-//   Error.captureStackTrace(err, arguments.callee);
-
-//   var stack = err.stack;
-//   console.log('callSitesForPreviuseTicks:', callSitesForPreviuseTicks);
-//   if (callSitesForPreviuseTicks) {
-//     for(let item of callSitesForPreviuseTicks) {
-//       if (item) {
-//         if (item instanceof Array) {
-//           for(let val of item) {
-//             console.log(val.getTypeName(), val.getFunctionName(), val.getFileName(), val.getLineNumber());
-//           }
-//         } else {
-//           console.log(item.getTypeName(), item.getFunctionName(), item.getFileName(), item.getLineNumber());
-//         }
-//       }
-//     }
-//   }
-  
-//   stack.push(callSitesForPreviuseTicks);
-//   Error.prepareStackTrace = orig;
-
-//   return stack;
-// }
-
 function getCallSites(skip) {
   const limit = Error.stackTraceLimit;
 
