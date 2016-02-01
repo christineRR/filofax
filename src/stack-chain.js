@@ -7,7 +7,6 @@ function stackChain() {
   this.extend = new TraceModifier();
   this.filter = new TraceModifier();
   this.format = new StackFormater();
-  // this.version = require('./package.json').version;
 }
 
 var SHORTCUT_CALLSITE = false;

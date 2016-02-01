@@ -1,5 +1,5 @@
 var async = require('../src/async');
-
+Error.stackTraceLimit = Infinity;
 function trace() {
   var err = new Error();
   Error.captureStackTrace(err, arguments.callee);
@@ -8,23 +8,23 @@ function trace() {
   return stack;
 }
 
-// function say() {
-//   trace()
-//   console.log('nice to meet you');
-//   setTimeout(function () {
-//     trace()
-//     console.log('setTimeout', 200);
-//     setTimeout(function () {
-//       trace()
-//       console.log('setTimeout', 300)
-//       setTimeout(function() {
-//         trace()
-//         console.log('setTimeout', 400)
-//       }, 400)
-//     }, 300);
-//   }, 200);
-// }
-// say();
+function say() {
+  trace()
+  console.log('nice to meet you');
+  setTimeout(function () {
+    trace()
+    console.log('setTimeout', 200);
+    setTimeout(function () {
+      trace()
+      console.log('setTimeout', 300)
+      setTimeout(function() {
+        trace()
+        console.log('setTimeout', 400)
+      }, 400)
+    }, 300);
+  }, 200);
+}
+say();
 
 
 function sing() {

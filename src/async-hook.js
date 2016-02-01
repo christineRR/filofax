@@ -1,9 +1,12 @@
 const chain = require('./stack-chain');
-var AsyncHook = require('./hook');
-var asyncHook = new AsyncHook();
+const Hook = require('./hook');
+const asyncHook = new Hook();
+const Last = require('./last');
 
 let callSitesForPreviuseTicks = null;
+let lastStackFrame = null;
 const stacks = new Map();
+const lastMap = new Map();
 
 asyncHook.add({
   init: asyncInit,
@@ -15,46 +18,14 @@ asyncHook.add({
 asyncHook.enable();
 
 chain.extend.attach(function (error, frames) {
+  // asyncBefore has get lastStackFrame value
+  if (lastStackFrame) {
+    error.lastStackFrame = lastStackFrame;
+  }
+  // asyncBefore has get callSitesForPreviuseTicks value
   frames.push.apply(frames, callSitesForPreviuseTicks);
-  console.log(frames);
   return frames;
 });
-
-
-// function getCallSites() {
-//   // get stack callsite array
-//   var orig = Error.prepareStackTrace;
-//   Error.prepareStackTrace = function(_, stack){ return stack; };
-//   var err = new Error;
-//   /**
-//    * when strict mode, arguments.callee not work
-//    * getFunction() return undefined
-//    * getThis return undefined
-//    */
-//   // Error.captureStackTrace(err, belowFn || StackTrace.get);
-//   Error.captureStackTrace(err, arguments.callee);
-
-//   var stack = err.stack;
-//   console.log('callSitesForPreviuseTicks:', callSitesForPreviuseTicks);
-//   if (callSitesForPreviuseTicks) {
-//     for(let item of callSitesForPreviuseTicks) {
-//       if (item) {
-//         if (item instanceof Array) {
-//           for(let val of item) {
-//             console.log(val.getTypeName(), val.getFunctionName(), val.getFileName(), val.getLineNumber());
-//           }
-//         } else {
-//           console.log(item.getTypeName(), item.getFunctionName(), item.getFileName(), item.getLineNumber());
-//         }
-//       }
-//     }
-//   }
-  
-//   stack.push(callSitesForPreviuseTicks);
-//   Error.prepareStackTrace = orig;
-
-//   return stack;
-// }
 
 function getCallSites(skip) {
   const limit = Error.stackTraceLimit;
@@ -71,7 +42,7 @@ function getCallSites(skip) {
 }
 
 function asyncInit(uid, handle, parentUid) {
-  console.log('async init:', arguments);
+  console.log('async init', uid);
   const trace = getCallSites(2);
 
   // Add all the callSites from previuse ticks
@@ -84,24 +55,25 @@ function asyncInit(uid, handle, parentUid) {
   // `trace` now contains callSites from this ticks and all the ticks leading
   // up to this event in time
   stacks.set(uid, trace);
+  lastMap.set(uid, Last.stackframe);
 }
 
 function asyncBefore(uid) {
-  console.log('async before:', uid);
   // restore previuseTicks for this specific async action, thereby allowing it
   // to become a part of a error `stack` string
   callSitesForPreviuseTicks = stacks.get(uid);
+  lastStackFrame = lastMap.get(uid);
 }
 
 function asyncAfter(uid) {
-  console.log('async after:', uid);
   // clear `callSitesForPreviuseTicks`. In some cases the such as Promises the
   // handle context is lost. So to prevent callSites leaking into the wrong
   // stack trace, clear `callSitesForPreviuseTicks` here.
   callSitesForPreviuseTicks = null;
+  lastStackFrame = null;
 }
 
 function asyncDestroy(uid) {
-  console.log('async destroy:', uid);
   stacks.delete(uid);
+  lastMap.delete(uid);
 }

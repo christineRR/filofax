@@ -1,11 +1,15 @@
 /**
  * 1. format function callsite to StackFrame Object
  * 2. format Error Object to StackFrame Object
+ * 3. async hook
  */
 
+// require async hook
+require('./async-hook');
+Error.stackTraceLimit = Infinity;
+
 var StackFrame = require('./stackframe');
-// var md5 = require('blueimp-md5');
-var lastStackFrame = null;
+var Last = require('./last');
 
 class StackTrace {
 
@@ -13,38 +17,31 @@ class StackTrace {
     return `${str}:${performance.now()}`;
   }
   
-  static get(opts, belowFn) {
-    // get stack callsite array
-    var orig = Error.prepareStackTrace;
-    Error.prepareStackTrace = function(_, stack){ return stack; };
-    var err = new Error;
-    /**
-     * when strict mode, arguments.callee not work
-     * getFunction() return undefined
-     * getThis return undefined
-     */
-    // Error.captureStackTrace(err, belowFn || StackTrace.get);
-    Error.captureStackTrace(err, belowFn || arguments.callee);
+  static get(opts) {
 
-    var stack = err.stack;
-    Error.prepareStackTrace = orig;
+    var err = new Error();
+    Error.captureStackTrace(err, arguments.callee);
+
+    // trigger Error.prepareStackTrace
+    var stack = err.callSite.mutated;
+    console.log('get stack length with:', stack.length);
+
+    // 异步会挂载 err.lastStackFrame 属性，其他情况为同步获取
+    lastStackFrame = err.lastStackFrame ? err.lastStackFrame : Last.stackframe;
+    console.log('get lastStackFrame:', lastStackFrame);
 
     var firstCaller = stack[1];
     var functionName = firstCaller.getFunctionName();
+    var typeName = firstCaller.getTypeName();
 
     if (opts && opts.type === 'root') {
-      var rootToken =  StackTrace.makeToken(functionName);
+      var rootToken =  StackTrace.makeToken(`${typeName}:${functionName}`);
       var parentToken = null;
       var token = rootToken;
     } else {
-      var interval = performance.now() - lastStackFrame.time;
-      if (interval >= 50000) {
-        // TODO: 大于 50ms 的异步、定时任务情况处理
-      } else {
-        var rootToken = lastStackFrame.rootToken;
-        var parentToken = lastStackFrame.token;
-        var token = StackTrace.makeToken(functionName);
-      }
+      var rootToken = lastStackFrame.rootToken;
+      var parentToken = lastStackFrame.token;
+      var token = StackTrace.makeToken(`${typeName}:${functionName}`);
     }
 
     var func = firstCaller.getFunction();
@@ -63,13 +60,13 @@ class StackTrace {
       token: token
     });
 
-    lastStackFrame = sf;
+    // set lastStackFrame
+    Last.stackframe = sf;
     console.log(sf.toString());
     return sf;
   }
   
   static parse(err) {
-    // var V8_STACK_REGEXP = /^\s*at .*(\S+\:\d+|\(native\))/m;
     var V8_STACK_REGEXP = /at (?:(.+)\s+\()?(?:(.+?):(\d+):(\d+)|([^)]+))\)?/;
     var TYPE_FUNCTION_REGEXP = /([^\.]+)(?:\.(.+))?/;
     var errStack = err.stack.split('\n');
@@ -80,21 +77,24 @@ class StackTrace {
     var match = firstCaller.match(V8_STACK_REGEXP);
 
     if (match) {
-      var typeMatch = match[1].match(TYPE_FUNCTION_REGEXP);
-      var typeName = typeMatch[1];
-      var functionName = typeMatch[2];
-
+      if (match[1]) {
+        var typeMatch = match[1].match(TYPE_FUNCTION_REGEXP);
+        var typeName = typeMatch[1];
+        var functionName = typeMatch[2];
+      }
+      
       var fileName = match[2];
-      var lineNumber = parseInt(match[3], 10);
-      var columnNumber = parseInt(match[4], 10);
-    } else {
-      var typeName = '';
-      var functionName = '';
-      var fileName = '';
-      var lineNumber = 0;
-      var columnNumber = 0;
-    }
+      var lineNumber = Number(match[3]);
+      var columnNumber = Number(match[4]);
+    } 
 
+    var typeName = typeName ? typeName : '';
+    var functionName = functionName ? functionName : '';
+    var fileName = fileName ? fileName : '';
+    var lineNumber = lineNumber ? lineNumber : 0;
+    var columnNumber = columnNumber ? columnNumber : 0;
+
+    var lastStackFrame = err.lastStackFrame ? err.lastStackFrame : Last.stackframe;
     var sf = new StackFrame({
       prefix: errInfo,
       typeName: typeName,
@@ -105,7 +105,7 @@ class StackTrace {
       columnNumber: columnNumber,
       rootToken: lastStackFrame.rootToken,
       parentToken: lastStackFrame.token,
-      token: StackTrace.makeToken(functionName)
+      token: StackTrace.makeToken(`${typeName}:${functionName}`)
     });
 
     console.log(sf.toString());

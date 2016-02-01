@@ -9,12 +9,6 @@ const intervalMap = new Map();
 module.exports = function patch() {
   patchTimer(this, this, 'setTimeout', 'clearTimeout', TimeoutWrap, timeoutMap, true);
   patchTimer(this, this, 'setInterval', 'clearInterval', IntervalWrap, intervalMap, false);
-
-  // global.setTimeout = timers.setTimeout;
-  // global.setInterval = timers.setInterval;
-
-  // global.clearTimeout = timers.clearTimeout;
-  // global.clearInterval = timers.clearInterval;
 };
 
 function patchTimer(hooks, state, setFn, clearFn, Handle, timerMap, singleCall) {
