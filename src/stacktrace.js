@@ -5,9 +5,8 @@
 
 // hook async
 require('./async');
-const chain = require('./stack-chain');
+Error.stackTraceLimit = Infinity;
 var StackFrame = require('./stackframe');
-// var md5 = require('blueimp-md5');
 var lastStackFrame = null;
 
 class StackTrace {
@@ -16,23 +15,12 @@ class StackTrace {
     return `${str}:${performance.now()}`;
   }
   
-  static get(opts, belowFn) {
-    // get stack callsite array
-    // var orig = Error.prepareStackTrace;
-    // Error.prepareStackTrace = function(_, stack){ return stack; };
-    // var err = new Error;
-    /**
-     * when strict mode, arguments.callee not work
-     * getFunction() return undefined
-     * getThis return undefined
-     */
-    // Error.captureStackTrace(err, belowFn || StackTrace.get);
-    // Error.captureStackTrace(err, belowFn || arguments.callee);
+  static get(opts) {
+    var err = new Error();
+    Error.captureStackTrace(err, arguments.callee);
+    var stack = err.callSite.mutated;
+    console.log(stack);
 
-    // var stack = err.stack;
-    // Error.prepareStackTrace = orig;
-    
-    var stack = chain.callSite();
     for(var item of stack) {
       console.log(item.getTypeName(), item.getFunctionName(), item.getLineNumber());
     }

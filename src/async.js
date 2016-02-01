@@ -16,7 +16,6 @@ asyncHook.enable();
 
 chain.extend.attach(function (error, frames) {
   frames.push.apply(frames, callSitesForPreviuseTicks);
-  console.log(frames);
   return frames;
 });
 
@@ -35,7 +34,6 @@ function getCallSites(skip) {
 }
 
 function asyncInit(uid, handle, parentUid) {
-  console.log('async init:', arguments);
   const trace = getCallSites(2);
 
   // Add all the callSites from previuse ticks
@@ -51,14 +49,12 @@ function asyncInit(uid, handle, parentUid) {
 }
 
 function asyncBefore(uid) {
-  console.log('async before:', uid);
   // restore previuseTicks for this specific async action, thereby allowing it
   // to become a part of a error `stack` string
   callSitesForPreviuseTicks = stacks.get(uid);
 }
 
 function asyncAfter(uid) {
-  console.log('async after:', uid);
   // clear `callSitesForPreviuseTicks`. In some cases the such as Promises the
   // handle context is lost. So to prevent callSites leaking into the wrong
   // stack trace, clear `callSitesForPreviuseTicks` here.
@@ -66,6 +62,5 @@ function asyncAfter(uid) {
 }
 
 function asyncDestroy(uid) {
-  console.log('async destroy:', uid);
   stacks.delete(uid);
 }

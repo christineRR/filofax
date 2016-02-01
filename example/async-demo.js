@@ -1,5 +1,5 @@
 var async = require('../src/async');
-
+Error.stackTraceLimit = Infinity;
 function trace() {
   var err = new Error();
   Error.captureStackTrace(err, arguments.callee);
