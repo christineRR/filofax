@@ -1,7 +1,7 @@
 const chain = require('./stack-chain');
-var AsyncHook = require('./hook');
-var asyncHook = new AsyncHook();
-var Last = require('./last');
+const Hook = require('./hook');
+const asyncHook = new Hook();
+const Last = require('./last');
 
 let callSitesForPreviuseTicks = null;
 let lastStackFrame = null;
@@ -18,9 +18,11 @@ asyncHook.add({
 asyncHook.enable();
 
 chain.extend.attach(function (error, frames) {
+  // asyncBefore has get lastStackFrame value
   if (lastStackFrame) {
     error.lastStackFrame = lastStackFrame;
   }
+  // asyncBefore has get callSitesForPreviuseTicks value
   frames.push.apply(frames, callSitesForPreviuseTicks);
   return frames;
 });

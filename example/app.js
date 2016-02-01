@@ -97,7 +97,10 @@ class C {
 
   fake() {
     trace.shot({type: 'root'});
-    throw new Error('school fake error');
+    setTimeout(function () {
+      trace.shot();
+      throw new Error('school fake error');
+    }, 100);
   }
 
 }
@@ -107,13 +110,13 @@ window.onerror = function (msg, url, line, column, err) {
   trace.dump();
 }
 
-var school = new C();
-school.share();
-school.eat();
-// trigger error
-// school.fake();
-
 setTimeout(function () {
   console.log('*************')
   trace.dump();
 }, 1000);
+
+var school = new C();
+school.share();
+school.eat();
+// trigger error
+school.fake();
