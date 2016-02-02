@@ -36,10 +36,13 @@ class CycleList {
       this.cursor = 0;
     }
     this.nextCursorTime = performance.now() + this.shottime;
+    console.log('[CycleList move]:', this.cursor, this.nextCursorTime);
+    this.clean();
   }
 
   // push stack frame to data
   push(frame) {
+    console.log('[CycleList push]:', this.cursor);
     var trace = this.data[this.cursor];
     var rootToken = frame.rootToken;
 
@@ -48,6 +51,12 @@ class CycleList {
       trace[rootToken] = [];
     }
     trace[rootToken].push(frame.toString());
+  }
+
+  // clean current data after move cursor
+  clean() {
+    console.log('[CycleList clean:]', this.cursor);
+    this.data[this.cursor] = {};
   }
 
   dump() {

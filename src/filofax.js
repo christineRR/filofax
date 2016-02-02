@@ -5,6 +5,8 @@ class Filofax {
 
   constructor(opts) {
 
+    opts = opts || {};
+
     // 时间生命周期 1 分钟
     this.lifetime = opts.lifetime ? opts.lifetime : 1*60*1000;
 
