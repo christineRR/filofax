@@ -4,28 +4,24 @@ var CycleList = require('./cycle-list');
 class Filofax {
 
   constructor(opts) {
+
     // 时间生命周期 1 分钟
-    this.lifetime = 1*60*1000;
+    this.lifetime = opts.lifetime ? opts.lifetime : 1*60*1000;
 
     // 单个时间滑窗 10s
-    this.shottime = 10*1000;
+    this.shottime = opts.shottime ? opts.shottime : 10*1000;
 
     // 滑窗个数
     this.maxSize = this.lifetime/this.shottime;
 
     this.stack = new CycleList({
-      size: this.maxSize
+      size: this.maxSize,
+      shottime: this.shottime
     });
-
-    this.startime = performance.now();
-    this.lasttime = this.startime;
   }
 
   shot(opts) {
-    var now = performance.now();
-    var interval = now - this.lasttime;
-
-    if (interval > this.shottime) {
+    if (this.stack.isNext()) {
       this.stack.move();
     }
 
