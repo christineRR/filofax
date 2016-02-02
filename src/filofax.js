@@ -1,4 +1,5 @@
 var StackTrace = require('./stacktrace');
+var CycleList = require('./cycle-list');
 
 class Filofax {
 
@@ -12,41 +13,32 @@ class Filofax {
     // 滑窗个数
     this.maxSize = this.lifetime/this.shottime;
 
-    this.stack = [];
-    for(var i = 0, len = this.maxSize - 1; i <= len; i++) {
-      // 单个时间滑窗对象
-      this.stack[i] = {};
-    }
+    this.stack = new CycleList({
+      size: this.maxSize
+    });
 
     this.startime = performance.now();
+    this.lasttime = this.startime;
   }
 
   shot(opts) {
     var now = performance.now();
-    var interval = now - this.startime;
+    var interval = now - this.lasttime;
 
-    var cursor = Math.floor((interval / this.shottime) % this.maxSize);
-
-    var trace = this.stack[cursor];
+    if (interval > this.shottime) {
+      this.stack.move();
+    }
 
     if (opts instanceof Error) {
       var frame = StackTrace.parse(opts);
     } else {
       var frame = StackTrace.get(opts);
     }
-
-    if (trace) {
-      var keys = Object.keys(trace);
-      if (keys.indexOf(frame.rootToken) === -1) {
-        trace[frame.rootToken] = [];
-      }
-      trace[frame.rootToken].push(frame.toString());
-    }
-
+    this.stack.push(frame);
   }
 
   dump() {
-    console.log(this.stack);
+    console.log(this.stack.dump());
   }
 
   upload() {
