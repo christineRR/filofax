@@ -2,8 +2,8 @@ var path = require("path");
 module.exports = {
   entry: {
     // app: ["./async-demo.js"]
-    app: ["./app.js"]
-    // app: ["./index.jsx"]
+    // app: ["./app.js"]
+    app: ["./index.jsx"]
   },
   output: {
     path: path.resolve(__dirname, "build"),
