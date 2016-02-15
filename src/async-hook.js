@@ -1,6 +1,5 @@
-const chain = require('./stack-chain');
-const Hook = require('./hook');
-const asyncHook = new Hook();
+const chain = require('stack-chain');
+const asyncHook = require('async-hook-browser');
 const Last = require('./last');
 
 let callSitesForPreviuseTicks = null;
@@ -8,7 +7,7 @@ let lastStackFrame = null;
 const stacks = new Map();
 const lastMap = new Map();
 
-asyncHook.add({
+asyncHook.addHooks({
   init: asyncInit,
   pre: asyncBefore,
   post: asyncAfter,

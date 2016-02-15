@@ -20,6 +20,7 @@
     "babel-plugin-add-module-exports": "*",
     "webpack": "*",
     "webpack-dev-server": "*",
+    "json-loader": "0.5.4",
     "mocha": "*",
     "chai": "*",
     "jsdom": "*",
@@ -27,6 +28,8 @@
     "react-dom": "*"
   },
   "dependencies": {
+    "stack-chain": "*",
+    "async-hook-browser": "*"
   },
   "engines": {
     "node": ">= 4.2"

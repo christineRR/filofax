@@ -12,7 +12,7 @@ module.exports = {
   },
   devtool: 'source-map',
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx', '.json']
   },
   module: {
     loaders: [
@@ -20,6 +20,10 @@ module.exports = {
         test: /(\.jsx|\.js)$/,
         loader: 'babel',
         exclude: /(node_modules|bower_components)/
+      },
+      {
+        test: /\.json?$/,
+        loader: "json-loader"
       }
     ]
   }
