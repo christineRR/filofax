@@ -31,11 +31,15 @@ var config = {
         test: /(\.jsx|\.js)$/,
         loader: 'babel',
         exclude: /(node_modules|bower_components)/
+      },
+      {
+        test: /\.json?$/,
+        loader: "json-loader"
       }
     ]
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx', '.json']
   }
 };
 

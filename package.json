@@ -28,7 +28,8 @@
     "react-dom": "*"
   },
   "dependencies": {
-    "stack-chain": "*"
+    "stack-chain": "*",
+    "async-hook-browser": "*"
   },
   "engines": {
     "node": ">= 4.2"
