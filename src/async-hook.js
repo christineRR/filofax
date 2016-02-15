@@ -1,4 +1,4 @@
-const chain = require('./stack-chain');
+const chain = require('stack-chain');
 const Hook = require('./hook');
 const asyncHook = new Hook();
 const Last = require('./last');
