@@ -1,16 +1,9 @@
 "use strict";
 var jsdom = require('jsdom');
-var fs = require('fs');
-var path = require('path');
-
-// webpack common file for test
-// var commonFile = path.join(__dirname, '../../out/test/static/common.js');
-// var common = fs.readFileSync(commonFile, 'utf-8');
 
 jsdom.env({
   html: '<!doctype html><html><body></body></html>',
-  src:[],
-  done: function (err, window) {
+  created: function (err, window) {
     if (err) {
       return console.log('jsdom env error', err);
     }
@@ -29,6 +22,7 @@ jsdom.env({
     // take all properties of the window object and also attach it to the 
     // mocha global object
     propagateToGlobal(window);
+    console.log('------ env has load! ------');
   }
 });
 
@@ -42,4 +36,3 @@ function propagateToGlobal (window) {
   }
 }
 
-console.log('------ env has load! ------');
