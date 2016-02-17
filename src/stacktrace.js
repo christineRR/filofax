@@ -28,9 +28,11 @@ class StackTrace {
 
     // 异步会挂载 err.lastStackFrame 属性，其他情况为同步获取
     lastStackFrame = err.lastStackFrame ? err.lastStackFrame : Last.stackframe;
-    console.log('get lastStackFrame:', lastStackFrame);
+    // console.log('get lastStackFrame:', lastStackFrame);
 
-    var firstCaller = stack[1];
+    // 测试 get 函数时，需要设定 index
+    var index = typeof opts.index === 'number' ? opts.index : 1;
+    var firstCaller = stack[index];
     var functionName = firstCaller.getFunctionName();
     var typeName = firstCaller.getTypeName();
 
@@ -62,7 +64,7 @@ class StackTrace {
 
     // set lastStackFrame
     Last.stackframe = sf;
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
   
@@ -108,7 +110,7 @@ class StackTrace {
       token: StackTrace.makeToken(`${typeName}:${functionName}`)
     });
 
-    console.log(sf.toString());
+    // console.log(sf.toString());
     return sf;
   }
 }
