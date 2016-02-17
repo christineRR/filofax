@@ -1,7 +1,7 @@
 var StackTrace = require('../../src/stacktrace');
 var expect = require('chai').expect;
 
-describe('StackTrace #get', function() {
+describe('StackTrace #setTimeout', function() {
 
   var sfConstructor = null;
   var sfDelay = null;
