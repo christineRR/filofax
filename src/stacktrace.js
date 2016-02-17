@@ -19,6 +19,7 @@ class StackTrace {
   
   static get(opts) {
 
+    var opts = opts || {};
     var err = new Error();
     Error.captureStackTrace(err, arguments.callee);
 
@@ -36,7 +37,7 @@ class StackTrace {
     var functionName = firstCaller.getFunctionName();
     var typeName = firstCaller.getTypeName();
 
-    if (opts && opts.type === 'root') {
+    if (opts.type === 'root') {
       var rootToken =  StackTrace.makeToken(`${typeName}:${functionName}`);
       var parentToken = null;
       var token = rootToken;
