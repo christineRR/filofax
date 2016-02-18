@@ -5,6 +5,12 @@ class Filofax {
 
   constructor(opts) {
 
+    // 单例 singleton
+    if (arguments.callee.singletonInstance) {
+      return arguments.callee.singletonInstance;
+    }
+    arguments.callee.singletonInstance = this;
+
     opts = opts || {};
 
     // 时间生命周期 1 分钟
