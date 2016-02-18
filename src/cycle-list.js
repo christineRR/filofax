@@ -65,7 +65,7 @@ class CycleList {
   }
 
   find(sf) {
-    var indexArr = [];
+    var indexArr = [sf];
     var obj = {};
     this.data.forEach(function(bucket, index) {
       for (var key in bucket) {
@@ -76,12 +76,10 @@ class CycleList {
     });
 
     this.findParent(obj, indexArr, sf);
-    console.log(indexArr);
-    return indexArr.join(':');
+    return indexArr;
   }
 
   findParent(obj, indexArr, sf) {
-    console.log('current sf:', sf, indexArr);
     // when parentToken is null, sf is root
     if (!sf.parentToken) {
       return;
@@ -90,7 +88,7 @@ class CycleList {
     for(var bid in obj) {
       obj[bid].forEach(function (item, index) {
         if (sf.parentToken === item.token) {
-          indexArr.push(bid + '-' + index);
+          indexArr.push(item);
           current = item;
           return;
         }
