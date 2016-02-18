@@ -50,7 +50,8 @@ class CycleList {
     if (keys.indexOf(rootToken) === -1) {
       trace[rootToken] = [];
     }
-    trace[rootToken].push(frame.toString());
+    // trace[rootToken].push(frame.toString());
+    trace[rootToken].push(frame);
   }
 
   // clean current data after move cursor
@@ -61,6 +62,41 @@ class CycleList {
 
   dump() {
     return this.data;
+  }
+
+  find(sf) {
+    var indexArr = [];
+    var obj = {};
+    this.data.forEach(function(bucket, index) {
+      for (var key in bucket) {
+        if (sf.rootToken === key) {
+          obj[index] = bucket[key];
+        }
+      } 
+    });
+
+    this.findParent(obj, indexArr, sf);
+    console.log(indexArr);
+    return indexArr.join(':');
+  }
+
+  findParent(obj, indexArr, sf) {
+    console.log('current sf:', sf, indexArr);
+    // when parentToken is null, sf is root
+    if (!sf.parentToken) {
+      return;
+    }
+    var current = sf;
+    for(var bid in obj) {
+      obj[bid].forEach(function (item, index) {
+        if (sf.parentToken === item.token) {
+          indexArr.push(bid + '-' + index);
+          current = item;
+          return;
+        }
+      });
+    }
+    this.findParent(obj, indexArr, current);
   }
 }
 

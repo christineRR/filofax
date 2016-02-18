@@ -20,6 +20,8 @@ class Filofax {
       size: this.maxSize,
       shottime: this.shottime
     });
+
+    this.quene = [];
   }
 
   shot(opts) {
@@ -33,10 +35,19 @@ class Filofax {
       var frame = StackTrace.get(opts);
     }
     this.stack.push(frame);
+    return frame;
   }
 
-  dump() {
-    console.log(this.stack.dump());
+  dump(err) {
+    console.log('dump trigger with err:', err);
+    if (!err) {
+      return;
+    }
+
+    var sf = this.shot(err);
+    var index = this.stack.find(sf);
+    this.quene.push(index);
+    console.log('dump quene length is:', this.quene.length, this.quene);
   }
 
   upload() {

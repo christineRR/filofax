@@ -99,21 +99,28 @@ class C {
     trace.shot({type: 'root'});
     setTimeout(function () {
       trace.shot();
-      throw new Error('school fake error');
+      try {
+        throw new Error('school fake error');
+      } catch(err) {
+        trace.dump(err);
+      }
     }, 100);
+    this.nextError();
   }
 
+  nextError() {
+    trace.shot();
+    try {
+      JSON.parse('a:b');
+    } catch(err) {
+      trace.dump(err);
+    }
+  }
 }
 
-window.onerror = function (msg, url, line, column, err) {
-  trace.shot(err);
-  trace.dump();
-}
-
-setTimeout(function () {
-  console.log('*************')
-  trace.dump();
-}, 1000);
+// window.onerror = function (msg, url, line, column, err) {
+//   trace.dump(err);
+// }
 
 var school = new C();
 school.share();
