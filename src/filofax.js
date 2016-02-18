@@ -36,6 +36,7 @@ class Filofax {
     var opts = opts || {};
     // add root type
     opts.type = 'root';
+    opts.index = 2;
     this.shot(opts)
   }
 
