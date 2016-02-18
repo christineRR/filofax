@@ -4,7 +4,10 @@ var expect = require('chai').expect;
 describe('cyclelist #find', function() {
 
   it('when find error sf, should return array contain stack frame objects about this error', function() {
-    var cl = new CycleList();
+    var cl = new CycleList({
+      size: 2,
+      shottime: 10
+    });
     // error stack frame mock
     var sfError1 = {
       // parse error

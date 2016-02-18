@@ -74,6 +74,7 @@ class Filofax {
     if (isMaxLength || overMaxTime) {
       this.upload();
     }
+    console.log(this.stack.data);
   }
 
   upload() {
