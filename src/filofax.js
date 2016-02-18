@@ -1,5 +1,5 @@
 var StackTrace = require('./stacktrace');
-var CycleList = require('./cycle-list');
+var CycleList = require('./cyclelist');
 
 class Filofax {
 

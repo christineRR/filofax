@@ -1,7 +1,7 @@
-var CycleList = require('../../src/cycle-list');
+var CycleList = require('../../src/cyclelist');
 var expect = require('chai').expect;
 
-describe('cycle-list #push', function() {
+describe('cyclelist #push', function() {
   
   it('when new CycleList, should have init options', function() {
     var cl = new CycleList();
