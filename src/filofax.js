@@ -32,6 +32,13 @@ class Filofax {
     this.startime = performance.now();
   }
 
+  rootShot(opts) {
+    var opts = opts || {};
+    // add root type
+    opts.type = 'root';
+    this.shot(opts)
+  }
+
   shot(opts) {
     if (this.stack.isNext()) {
       this.stack.move();

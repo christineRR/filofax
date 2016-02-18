@@ -17,7 +17,7 @@ var Filofax = require('filofax');
 var ff = new Filofax();
 
 // 根节点埋点
-ff.shot({type: 'root'});
+ff.rootShot();
 
 // 子节点埋点
 ff.shot();
