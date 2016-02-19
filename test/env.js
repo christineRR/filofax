@@ -11,7 +11,10 @@ jsdom.env({
     // mock performance.now
     window.performance = {
       now: function() {
-        return Math.random();
+        // hack with nodejs, [秒，纳秒]
+        var arr = process.hrtime();
+        var time = arr[0] * 1000 + arr[1]/1000000;
+        return time;
       }
     }
 

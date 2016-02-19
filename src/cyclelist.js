@@ -4,14 +4,16 @@
 
 class CycleList {
   constructor(opts) {
+    var opts = opts || {};
     // 数组大小
-    this.size = opts.size ? opts.size: 10;
+    this.size = opts.size ? opts.size: 6;
     // 单个时间滑窗 10s
     this.shottime = opts.shottime ? opts.shottime : 10*1000;
 
     // 当前游标
     this.cursor = 0;
-    this.nextCursorTime = this.shottime;
+    this.starttime = performance.now();
+    this.nextCursorTime = this.starttime + this.shottime;
 
     // 数据
     this.data = [];
@@ -58,10 +60,6 @@ class CycleList {
   clean() {
     console.log('[CycleList clean:]', this.cursor);
     this.data[this.cursor] = {};
-  }
-
-  dump() {
-    return this.data;
   }
 
   find(sf) {

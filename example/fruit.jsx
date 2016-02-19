@@ -9,7 +9,7 @@ class Fruit extends React.Component {
   }
 
   handleClick(evt) {
-    this.props.trace.shot({type: 'root'});
+    this.props.trace.rootShot();
     if(this.state.eated === this.state.total) {
       return;
     }

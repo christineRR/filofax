@@ -14,20 +14,17 @@ tnpm install filofax
 var Filofax = require('filofax');
 
 // create global instance
-var ff = new Filofax();
+var trace = new Filofax();
 
 // 根节点埋点
-ff.shot({type: 'root'});
+trace.rootShot();
 
 // 子节点埋点
-ff.shot();
+trace.shot();
 
-// 错误埋点
+// 错误埋点，dump error 相关函数调用信息
 var err = new Error('something wrong');
-ff.shot(err);
-
-// dump 导出堆栈信息
-ff.dump();
+trace.dump(err);
 ```
 
 ## 详细设计

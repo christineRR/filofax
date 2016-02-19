@@ -18,7 +18,7 @@ class App extends React.Component {
   }
 
   render() {
-    trace.shot({type: 'root'});
+    trace.rootShot();
     return (
       <div>
         <button onClick={this.handleClick.bind(this)}>trace dump</button>

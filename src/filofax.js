@@ -1,9 +1,15 @@
 var StackTrace = require('./stacktrace');
-var CycleList = require('./cycle-list');
+var CycleList = require('./cyclelist');
 
 class Filofax {
 
   constructor(opts) {
+
+    // 单例 singleton
+    if (arguments.callee.singletonInstance) {
+      return arguments.callee.singletonInstance;
+    }
+    arguments.callee.singletonInstance = this;
 
     opts = opts || {};
 
@@ -22,8 +28,17 @@ class Filofax {
     });
 
     this.quene = [];
-    this.queneMax = 2;
+    // 队列最大为 10
+    this.queneMax = opts.queneMax ? opts.queneMax : 10;
     this.startime = performance.now();
+  }
+
+  rootShot(opts) {
+    var opts = opts || {};
+    // add root type
+    opts.type = 'root';
+    opts.index = 2;
+    return this.shot(opts);
   }
 
   shot(opts) {
@@ -60,6 +75,7 @@ class Filofax {
     if (isMaxLength || overMaxTime) {
       this.upload();
     }
+    console.log(this.stack.data);
   }
 
   upload() {

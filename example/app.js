@@ -64,7 +64,7 @@ class C {
   }
 
   share() {
-    trace.shot({type: 'root'});
+    trace.rootShot();
     for(var item of this.children) {
       switch (item.love) {
         case 'apple':
@@ -83,7 +83,7 @@ class C {
   }
 
   eat() {
-    trace.shot({type: 'root'});
+    trace.rootShot();
     for(var fruit of this.fruits) {
       var name = fruit.name;
       for(var item of this.children) {
@@ -96,7 +96,7 @@ class C {
   }
 
   fake() {
-    trace.shot({type: 'root'});
+    trace.rootShot();
     setTimeout(function () {
       trace.shot();
       try {
