@@ -28,7 +28,8 @@ class Filofax {
     });
 
     this.quene = [];
-    this.queneMax = 2;
+    // 队列最大为 10
+    this.queneMax = opts.queneMax ? opts.queneMax : 10;
     this.startime = performance.now();
   }
 
@@ -37,7 +38,7 @@ class Filofax {
     // add root type
     opts.type = 'root';
     opts.index = 2;
-    this.shot(opts)
+    return this.shot(opts);
   }
 
   shot(opts) {

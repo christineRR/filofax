@@ -3,7 +3,12 @@ var expect = require('chai').expect;
 
 describe('filofax singleton', function() {
 
-  var ff = new FiloFax();
+  var ff = new FiloFax({
+    // 5s
+    lifetime: 5*1000,
+    // 1s
+    shottime: 1*1000
+  });
 
   var ff2 = new FiloFax();
 
